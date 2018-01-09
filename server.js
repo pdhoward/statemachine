@@ -4,7 +4,6 @@ const bodyParser =    require("body-parser");
 const logger =        require("morgan");
 const mongoose =      require("mongoose");
 const setup =         require('./config').init();
-const Stately =       require('stately.js');
 
 var app = express();
 //////////////////////////////////////////////////////////////////////////
@@ -37,79 +36,18 @@ app.use(bodyParser.urlencoded({
 app.use(express.static("public"));
 
 ////////////////////////////////////////////////////////////
-////////////////////  State Machine    ////////////////////
-/////////////////////////////////////////////////////////
-function reporter(event, oldState, newState) {
-
-    var transition = oldState + ' => ' + newState;
-
-    switch (transition) {
-        /*
-        ...
-        case 'STOPPED => PLAYING':
-        case 'PLAYING => PAUSED':
-        ...
-        */
-        default:
-            console.log(transition);
-            break;
-    }
-}
-
-var initialStateName = "STOPPED"
-
-var statesObject = {
-
-    'STOPPED': {
-        onEnter: reporter,
-        play: function () {
-            return this.PLAYING;
-        }
-    },
-    'PLAYING': {
-        onEnter: reporter,
-        stop: function () {
-            return this.STOPPED;
-        },
-        pause: function () {
-            return this.PAUSED;
-        }
-    },
-    'PAUSED': {
-        onEnter: reporter,
-        play: function () {
-            return this.PLAYING;
-        },
-        stop: function () {
-            return this.STOPPED;
-        }
-    }
-};
-
-var machine = new Stately(statesObject, initialStateName);
-
-
-////////////////////////////////////////////////////////////
 ////////////////////  Routes     /////////////////////////
 /////////////////////////////////////////////////////////
 
-let cnt = 0
+const machineRoute =     express.Router();
+require('./routes/admin')(machineRoute);
+
+////////////////////
+
+app.get("/machine", machineRoute )
+
 app.post("/submit", function(req, res) {
 
-  if (cnt == 1) {
-      console.log("-----------1-------------")
-      machine.play().stop()
-    }
-  if (cnt == 2) {
-      console.log("-----------2-------------")
-      machine.play().pause().play().pause().stop()
-    }
-  //
-  if (cnt == 3) {
-      console.log("-----------3-------------")
-      machine.play().stop().play()
-    }
-  cnt++
   req.body.array = ["item1", "item2", "item3"];
   req.body.boolean = false;
 
