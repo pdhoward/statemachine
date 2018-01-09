@@ -67,7 +67,7 @@ let objMsg = {
   array: [],
   date: undefined,
   message: "This is a testing process",
-  state: {}
+  state: ""
 }
 
 module.exports = function(router) {
@@ -76,9 +76,15 @@ module.exports = function(router) {
       var machine = new Stately(statesObject, initialStateName);
       console.log("-------------------- " + cnt)
       machine.next()
+      objMsg.number = cnt
+      objMsg.state = machine.getMachineState()
       cnt++
-      objMsg.state = clone(machine)
       var content = new Example(objMsg);
+
+      content.findOne({ 'name': 'ChaoticBot', 'number': cnt }, function (err, profile) {
+        if (err) return handleError(err);
+          console.log('%s %s is a %s.', profile.name, profile.number, profile.state)
+        })
 
       content.save(function(error, doc) {
         if (error) {

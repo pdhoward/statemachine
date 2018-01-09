@@ -35,7 +35,7 @@ var ExampleSchema = new Schema({
       "Longstring should be longer."
     ]
   },
-  state: Object
+  state: String
 });
 
 var Example = mongoose.model("Example", ExampleSchema);
