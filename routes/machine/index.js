@@ -7,6 +7,7 @@
 const bodyParser =    require('body-parser')
 const Stately =       require('stately.js');
 const uuidv1 =        require('uuid/v1');
+const clone =         require('clone-deep')
 
 function reporter(event, oldState, newState) {
 
@@ -66,7 +67,7 @@ let objMsg = {
   array: [],
   date: undefined,
   message: "This is a testing process",
-  state: Object
+  state: {}
 }
 
 module.exports = function(router) {
@@ -76,6 +77,7 @@ module.exports = function(router) {
       console.log("-------------------- " + cnt)
       machine.next()
       cnt++
+      objMsg.state = clone(machine)
       var content = new Example(objMsg);
 
       content.save(function(error, doc) {
