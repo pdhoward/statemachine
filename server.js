@@ -56,7 +56,10 @@ function reporter(event, oldState, newState) {
     }
 }
 
+var initialStateName "STOPPED"
+
 var statesObject = {
+
     'STOPPED': {
         onEnter: reporter,
         play: function () {
@@ -83,8 +86,8 @@ var statesObject = {
     }
 });
 
-radio.play().pause().play().pause().stop();
 var machine = new Stately(statesObject, initialStateName);
+machine.play().pause().play().pause().stop();
 
 ////////////////////////////////////////////////////////////
 ////////////////////  Routes     /////////////////////////
