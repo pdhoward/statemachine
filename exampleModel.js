@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 
 var ExampleSchema = new Schema({
 
-  string: {
+  name: {
     type: String,
     trim: true,
     required: "String is Required"
@@ -25,7 +25,7 @@ var ExampleSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  longstring: {
+  message: {
     type: String,
     validate: [
       function(input) {
@@ -34,7 +34,8 @@ var ExampleSchema = new Schema({
       // Error Message
       "Longstring should be longer."
     ]
-  }
+  },
+  state: Object
 });
 
 var Example = mongoose.model("Example", ExampleSchema);

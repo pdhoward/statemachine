@@ -55,16 +55,36 @@ var statesObject = {
     }
 };
 
-var machine = new Stately(statesObject, initialStateName);
-let cnt = 0
+var Example = require("../../exampleModel.js");
+
+let cnt = 1000
+let objMsg = {
+  name: "ChaoticBot",
+  number: cnt,
+  email: "chaotic@gmail.com",
+  boolean: true,
+  array: [],
+  date: undefined,
+  message: "This is a testing process",
+  state: Object
+}
 
 module.exports = function(router) {
     router.use(bodyParser.json());
       router.use(function(req, res, next) {
-
+      var machine = new Stately(statesObject, initialStateName);
       console.log("-------------------- " + cnt)
       machine.next()
       cnt++
+      var content = new Example(objMsg);
 
+      content.save(function(error, doc) {
+        if (error) {
+          res.send(error);
+        }
+        else {
+          res.send(doc);
+        }
+      });
     })
   }
