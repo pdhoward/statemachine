@@ -1,5 +1,5 @@
 
-const getobject = (req, res, msg) => {
+exports.getobject = (req, res, msg) => {
   let priorCnt = cnt - 1
   Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {
     if (err) return handleError(err);
