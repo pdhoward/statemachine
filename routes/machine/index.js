@@ -81,17 +81,8 @@ module.exports = function(router) {
       cnt++
       let priorCnt = cnt - 1
       let content = new Example(objMsg);
-
-      Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {
-        if (err) return handleError(err);
-        if(profile) {
-          console.log('%s %s is a %s.', profile.name, profile.number, profile.state)
-          return
-        }
-        console.log("--------------------------")
-        console.log("MONGO READ FOUND NO USER")
-        console.log(profile)
-        })
+      console.log("-------DEBUG ------- ")
+      console.log("PRIORCNT = " + priorCnt)
 
       content.save(function(error, doc) {
         if (error) {
@@ -100,6 +91,18 @@ module.exports = function(router) {
         else {
           res.send(doc);
         }
-      });
+      })
+
+      Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {
+        if (err) return handleError(err);
+        if(profile) {
+          console.log('%s %s has a state of %s.', profile.name, profile.number, profile.state)
+          return
+        }
+        console.log("--------------------------")
+        console.log("MONGO READ FOUND NO USER")
+        console.log(profile)
+        })
+        
     })
   }
