@@ -8,6 +8,12 @@ const bodyParser =    require('body-parser')
 const Stately =       require('stately.js');
 const uuidv1 =        require('uuid/v1');
 const clone =         require('clone-deep')
+const { initialize,
+        intent,
+        assessconfidence,
+        composeresponse,
+        response,
+        record } =        require('../stages')
 
 function chronologer(event, oldState, newState) {
 
@@ -28,45 +34,8 @@ function chronologer(event, oldState, newState) {
             break;
     }
 }
-const notifymembers = (req, res, item, cb) => {
-  console.log("MEMBERS NOTIFIED BY TEXT")
-  console.log(item)
-  res.json(item)
-  cb()
-}
 
-const saveobject = (req, res, msg) => {
-  objMsg.number = cnt
-  objMsg.state = machine.getMachineState()
-  cnt++
-  let content = new Example(objMsg);
-  console.log("SAVING OBJECT " + objMsg.number)
-  content.save(function(error, doc) {
-    if (error) {
-      res.send(error);
-    }
-    else {
-      res.send(doc);
-    }
-  })
-}
 
-const getobject = (req, res, msg) => {
-  let priorCnt = cnt - 1
-  Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {
-    if (err) return handleError(err);
-    if(profile) {
-      console.log('%s %s has a state of %s.', profile.name, profile.number, profile.state)
-      initialStateName = profile.state
-      res.json(profile)
-      return
-    }
-    console.log("--------------------------")
-    console.log("MONGO READ FOUND NO USER")
-    console.log(profile)
-    res.json(profile)
-    })
-}
 
 var initialStateName = "START"
 
@@ -98,7 +67,7 @@ var statesObject = {
             return this.PLAYING;
         },
         next: function (req, res, msg) {
-          getobject(req, res, msg)
+            getobject(req, res, msg)
             return this.START;
         }
     }
