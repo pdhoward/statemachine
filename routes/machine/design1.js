@@ -9,7 +9,7 @@ const Stately =       require('stately.js');
 const uuidv1 =        require('uuid/v1');
 const clone =         require('clone-deep')
 
-function reporter(event, oldState, newState) {
+function chronologer(event, oldState, newState) {
 
     var transition = oldState + ' => ' + newState;
 
@@ -28,21 +28,25 @@ function reporter(event, oldState, newState) {
             break;
     }
 }
+const notifymembers = (item) => {
+  console.log("OK THIS IS A BIG TEST")
+  console.log(item)
+  //return this.PLAYING;
+}
 
-var initialStateName = "STOPPED"
+var initialStateName = "START"
 
 var statesObject = {
 
-    'STOPPED': {
-        onEnter: reporter,
-        next: function (item) {
-            console.log("OK THIS IS A BIG TEST")
-            console.log(item)
+    'START': {
+        onEnter: chronologer,
+        next: function () {
+            notifymembers("hello world'")
             return this.PLAYING;
         }
     },
     'PLAYING': {
-        onEnter: reporter,
+        onEnter: chronologer,
         stop: function () {
             return this.STOPPED;
         },
@@ -51,7 +55,7 @@ var statesObject = {
         }
     },
     'PAUSED': {
-        onEnter: reporter,
+        onEnter: chronologer,
         play: function () {
             return this.PLAYING;
         },
@@ -86,9 +90,6 @@ module.exports = function(router) {
       cnt++
       let priorCnt = cnt - 1
       let content = new Example(objMsg);
-      console.log("-------DEBUG ------- ")
-      console.log("PRIORCNT = " + priorCnt)
-      console.log("-------------------")
       console.log("SAVING OBJECT " + objMsg.number)
       content.save(function(error, doc) {
         if (error) {
