@@ -47,10 +47,10 @@ var statesObject = {
     },
     'PAUSED': {
         onEnter: reporter,
-        next: function () {
+        play: function () {
             return this.PLAYING;
         },
-        stop: function () {
+        next: function () {
             return this.STOPPED;
         }
     }
