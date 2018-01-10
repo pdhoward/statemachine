@@ -63,6 +63,7 @@ const getobject = (req, res, msg) => {
     console.log("--------------------------")
     console.log("MONGO READ FOUND NO USER")
     console.log(profile)
+    res.json(profile)
     })
 }
 
