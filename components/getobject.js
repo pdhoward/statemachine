@@ -1,4 +1,21 @@
 
+
+var Example = require("../exampleModel.js");
+
+let cnt = 1000
+let objMsg = {
+  name: "ChaoticBot",
+  number: cnt,
+  email: "chaotic@gmail.com",
+  boolean: true,
+  array: [],
+  date: undefined,
+  message: "This is a testing process",
+  state: ""
+}
+
+
+
 exports.getobject = (req, res, msg) => {
   let priorCnt = cnt - 1
   Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {

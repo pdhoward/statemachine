@@ -1,8 +1,14 @@
 
+
+const {notifymembers,
+       getobject,
+       saveobject,
+       logger} =  require('../components')
+
 exports.notify = {
 
     'START': {
-        onEnter: '',
+        onEnter: logger,
         next: function (req, res, msg) {
             notifymembers(req, res, msg, function(){
                 console.log("returned >>>>>>>>>>>>>")
@@ -12,7 +18,7 @@ exports.notify = {
         }
     },
     'SAVING': {
-        onEnter: '',
+        onEnter: logger,
         stop: function () {
             return this.STOPPED;
         },
@@ -22,7 +28,7 @@ exports.notify = {
         }
     },
     'GETTING': {
-        onEnter: '',
+        onEnter: logger,
         play: function () {
             return this.PLAYING;
         },
