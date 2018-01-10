@@ -58,6 +58,7 @@ const getobject = (req, res, msg) => {
     if(profile) {
       console.log('%s %s has a state of %s.', profile.name, profile.number, profile.state)
       initialStateName = profile.state
+      res.json(profile)
       return
     }
     console.log("--------------------------")
