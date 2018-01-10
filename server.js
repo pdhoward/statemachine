@@ -40,7 +40,7 @@ app.use(express.static("public"));
 /////////////////////////////////////////////////////////
 
 const machineRoute =     express.Router();
-require('./routes/machine')(machineRoute);
+require('./routes/machine/design1')(machineRoute);
 
 ////////////////////
 
