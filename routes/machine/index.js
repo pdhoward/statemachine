@@ -73,17 +73,24 @@ let objMsg = {
 module.exports = function(router) {
     router.use(bodyParser.json());
       router.use(function(req, res, next) {
-      var machine = new Stately(statesObject, initialStateName);
+      let machine = new Stately(statesObject, initialStateName);
       console.log("-------------------- " + cnt)
       machine.next()
       objMsg.number = cnt
       objMsg.state = machine.getMachineState()
       cnt++
-      var content = new Example(objMsg);
+      let priorCnt = cnt - 1
+      let content = new Example(objMsg);
 
-      content.findOne({ 'name': 'ChaoticBot', 'number': cnt }, function (err, profile) {
+      Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {
         if (err) return handleError(err);
+        if(profile) {
           console.log('%s %s is a %s.', profile.name, profile.number, profile.state)
+          return
+        }
+        console.log("--------------------------")
+        console.log("MONGO READ FOUND NO USER")
+        console.log(profile)
         })
 
       content.save(function(error, doc) {
