@@ -28,10 +28,42 @@ function chronologer(event, oldState, newState) {
             break;
     }
 }
-const notifymembers = (item) => {
-  console.log("OK THIS IS A BIG TEST")
+const notifymembers = (req, res, item, cb) => {
+  console.log("MEMBERS NOTIFIED BY TEXT")
   console.log(item)
-  //return this.PLAYING;
+  res.json(item)
+  cb()
+}
+
+const saveobject = (req, res, msg) => {
+  objMsg.number = cnt
+  objMsg.state = machine.getMachineState()
+  cnt++
+  let content = new Example(objMsg);
+  console.log("SAVING OBJECT " + objMsg.number)
+  content.save(function(error, doc) {
+    if (error) {
+      res.send(error);
+    }
+    else {
+      res.send(doc);
+    }
+  })
+}
+
+const getobject = (req, res, msg) => {
+  let priorCnt = cnt - 1
+  Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {
+    if (err) return handleError(err);
+    if(profile) {
+      console.log('%s %s has a state of %s.', profile.name, profile.number, profile.state)
+      initialStateName = profile.state
+      return
+    }
+    console.log("--------------------------")
+    console.log("MONGO READ FOUND NO USER")
+    console.log(profile)
+    })
 }
 
 var initialStateName = "START"
@@ -40,27 +72,32 @@ var statesObject = {
 
     'START': {
         onEnter: chronologer,
-        next: function () {
-            notifymembers("hello world'")
-            return this.PLAYING;
+        next: function (req, res, msg) {
+            notifymembers(req, res, msg, function(){
+                console.log("returned >>>>>>>>>>>>>")
+            })
+            return this.SAVING;
+
         }
     },
-    'PLAYING': {
+    'SAVING': {
         onEnter: chronologer,
         stop: function () {
             return this.STOPPED;
         },
-        next: function () {
-            return this.PAUSED;
+        next: function (req, res, msg) {
+            saveobject(req, res, msg)
+            return this.GETTING;
         }
     },
-    'PAUSED': {
+    'GETTING': {
         onEnter: chronologer,
         play: function () {
             return this.PLAYING;
         },
-        next: function () {
-            return this.STOPPED;
+        next: function (req, res, msg) {
+          getobject(req, res, msg)
+            return this.START;
         }
     }
 };
@@ -78,43 +115,13 @@ let objMsg = {
   message: "This is a testing process",
   state: ""
 }
+let machine = new Stately(statesObject, initialStateName);
 
 module.exports = function(router) {
     router.use(bodyParser.json());
       router.use(function(req, res, next) {
-      let machine = new Stately(statesObject, initialStateName);
-      console.log("-------------------- " + cnt)
-      machine.next("this is a test")
-      objMsg.number = cnt
-      objMsg.state = machine.getMachineState()
-      cnt++
-      let priorCnt = cnt - 1
-      let content = new Example(objMsg);
-      console.log("SAVING OBJECT " + objMsg.number)
-      content.save(function(error, doc) {
-        if (error) {
-          res.send(error);
-        }
-        else {
-          res.send(doc);
-
-      // retrieve the object and the state that was recorded
-      // so on the next tick it will progress to the next state for machine.next
-      // this executes as part of callback above on the save
-      Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {
-        if (err) return handleError(err);
-        if(profile) {
-          console.log('%s %s has a state of %s.', profile.name, profile.number, profile.state)
-          initialStateName = profile.state
-          return
-        }
-        console.log("--------------------------")
-        console.log("MONGO READ FOUND NO USER")
-        console.log(profile)
-        })
-
-      }
-    })
-
-    })
-  }
+          console.log("-------------------- " + cnt)
+          let msg = {message: "Hello Wonderful Components"}
+          machine.next(req, res, msg)
+      })
+    }
