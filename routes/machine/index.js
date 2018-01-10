@@ -83,26 +83,32 @@ module.exports = function(router) {
       let content = new Example(objMsg);
       console.log("-------DEBUG ------- ")
       console.log("PRIORCNT = " + priorCnt)
-
+      console.log("-------------------")
+      console.log("SAVING OBJECT " + objMsg.number)
       content.save(function(error, doc) {
         if (error) {
           res.send(error);
         }
         else {
           res.send(doc);
-        }
-      })
 
+      // retrieve the object and the state that was recorded
+      // so on the next tick it will progress to the next state for machine.next
+      // this executes as part of callback above on the save
       Example.findOne({ 'name': 'ChaoticBot', 'number': priorCnt }, function (err, profile) {
         if (err) return handleError(err);
         if(profile) {
           console.log('%s %s has a state of %s.', profile.name, profile.number, profile.state)
+          initialStateName = profile.state
           return
         }
         console.log("--------------------------")
         console.log("MONGO READ FOUND NO USER")
         console.log(profile)
         })
-        
+
+      }
+    })
+
     })
   }
